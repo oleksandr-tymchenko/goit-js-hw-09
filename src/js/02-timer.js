@@ -11,12 +11,13 @@ disactivateBtn(true);
 updateDate('00', '00', '00', '00');
 
 let date = [];
-
+let timerId = null;
 
 
 const options = {
   enableTime: true,
     time_24hr: true,
+    clickOpens: true,
   
   defaultDate: new Date(),
   minuteIncrement: 1,
@@ -26,34 +27,51 @@ const options = {
           Notiflix.Notify.failure("Please choose a date in the future");
       } else {
           disactivateBtn(false);
+          options.clickOpens = false;
         //   console.log(selectedDates[0].getTime());
           date.push(selectedDates[0].getTime())
       }
   },
 };
 
-flatpickr("#datetime-picker", options);
+
+function changeClickOpens() {
+   options.clickOpens = false; 
+}
 
 
+console.log(flatpickr("#datetime-picker", options));
+
+
+console.log(options.clickOpens)
 
 function startTimer() {
-    
+    changeClickOpens();
     const currentDate = options.defaultDate.getTime();
     let chooseDate = date[0];
     disactivateBtn(true);
+    // changeClickOpens();
 
     activateChangeColor();
     
     // setInterval(countShowTimer, 1000, currentDate, chooseDate);
 
-    setInterval(() => {
+    timerId = setInterval(() => {
+        // while (chooseDate !== currentDate) {
         const deltaTime = chooseDate - currentDate;
-        const { days, hours, minutes, seconds } = convertMs(deltaTime)
+        if (deltaTime > 0) {
+            const { days, hours, minutes, seconds } = convertMs(deltaTime);
         
-        updateDate(days, hours, minutes, seconds);
+            updateDate(days, hours, minutes, seconds);
         
-        chooseDate -= 1000;
-       
+            chooseDate -= 1000; 
+        } else {
+            clearInterval(timerId);
+            activateChangeColor()
+        }
+        
+        
+        // clearInterval(timerId);
     }, 1000);
    
 };
@@ -67,7 +85,7 @@ function disactivateBtn (state){
 };
 
 function activateChangeColor() {
-    timerContainer.classList.add('timer__active')
+    timerContainer.classList.toggle('timer__active')
 };
 
 function updateDate(days, hours, minutes, seconds) {
@@ -117,7 +135,7 @@ function updateDate(days, hours, minutes, seconds) {
 //         startBtn.setAttribute('disabled', true);
 //     };
 
-function pad(value) {
+function addLeadingZero(value) {
     return String(value).padStart(2, '0');
 }
 
@@ -129,13 +147,13 @@ function convertMs(ms) {
   const day = hour * 24;
 
   // Remaining days
-  const days = pad(Math.floor(ms / day));
+  const days = addLeadingZero(Math.floor(ms / day));
   // Remaining hours
-  const hours = pad(Math.floor((ms % day) / hour));
+  const hours = addLeadingZero(Math.floor((ms % day) / hour));
   // Remaining minutes
-  const minutes = pad(Math.floor(((ms % day) % hour) / minute));
+  const minutes = addLeadingZero(Math.floor(((ms % day) % hour) / minute));
   // Remaining seconds
-  const seconds = pad(Math.floor((((ms % day) % hour) % minute) / second));
+  const seconds = addLeadingZero(Math.floor((((ms % day) % hour) % minute) / second));
 
   return { days, hours, minutes, seconds };
 };
