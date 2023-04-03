@@ -1,0 +1,38 @@
+.timer {
+    display: flex;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.field {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+}
+
+.label {
+    font-family: 'Roboto';
+        
+        font-weight: 500;
+        font-size: 14px;
+        line-height: 16px;
+        letter-spacing: 0.03em;
+        text-transform: uppercas
+}
+
+.value {
+    font-family: 'Raleway';
+       
+        font-weight: 700;
+        font-size: 40px;
+        line-height: 31px;
+        /* identical to box height */
+    
+        letter-spacing: 0.03em;
+        margin-bottom: 10px;
+        
+}
+
+.timer__active {
+    color: red;
+}

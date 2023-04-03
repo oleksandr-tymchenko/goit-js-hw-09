@@ -4,11 +4,15 @@ import Notiflix from 'notiflix';
 
 const startBtn = document.querySelector('button[data-start]');
 const timerContainer = document.querySelector('.timer')
-    
+
 startBtn.addEventListener('click', startTimer);
-startBtn.setAttribute('disabled', true);
+
+disactivateBtn(true);
+updateDate('00', '00', '00', '00');
 
 let date = [];
+
+
 
 const options = {
   enableTime: true,
@@ -21,50 +25,97 @@ const options = {
       if (selectedDates[0] < new Date()) {
           Notiflix.Notify.failure("Please choose a date in the future");
       } else {
-          startBtn.removeAttribute('disabled');
+          disactivateBtn(false);
         //   console.log(selectedDates[0].getTime());
           date.push(selectedDates[0].getTime())
       }
   },
 };
 
-
-
 flatpickr("#datetime-picker", options);
 
+
+
 function startTimer() {
+    
     const currentDate = options.defaultDate.getTime();
     let chooseDate = date[0];
+    disactivateBtn(true);
 
-
+    activateChangeColor();
+    
+    // setInterval(countShowTimer, 1000, currentDate, chooseDate);
 
     setInterval(() => {
         const deltaTime = chooseDate - currentDate;
-        const {days, hours, minutes, seconds} = convertMs(deltaTime)
-        console.log(`${days}::${hours}::${minutes}::${seconds}`);
+        const { days, hours, minutes, seconds } = convertMs(deltaTime)
+        
+        updateDate(days, hours, minutes, seconds);
+        
+        chooseDate -= 1000;
+       
+    }, 1000);
+   
+};
 
-        timerContainer.innerHTML = `<div class="field">
+// function setDates() {
+    
+// };
+
+function disactivateBtn (state){
+    startBtn.disabled = state;
+};
+
+function activateChangeColor() {
+    timerContainer.classList.add('timer__active')
+};
+
+function updateDate(days, hours, minutes, seconds) {
+    timerContainer.innerHTML = `<div class="field">
         <span class="value" data-days>${days}</span>
-        <span class="label">Days</span>
+        <span class="label">DAYS</span>
       </div>
       <div class="field">
         <span class="value" data-hours>${hours}</span>
-        <span class="label">Hours</span>
+        <span class="label">HOURS</span>
       </div>
       <div class="field">
         <span class="value" data-minutes>${minutes}</span>
-        <span class="label">Minutes</span>
+        <span class="label">MINUTES</span>
       </div>
       <div class="field">
         <span class="value" data-seconds>${seconds}</span>
-        <span class="label">Seconds</span>
+        <span class="label">SECONDS</span>
       </div>`;
 
-        chooseDate -= 1000;
-        startBtn.setAttribute('disabled', true);
-    }, 1000)
-   
 }
+
+
+// function countShowTimer (currentDate, chooseDate) {
+//      const deltaTime = chooseDate - currentDate;
+//         const {days, hours, minutes, seconds} = convertMs(deltaTime)
+//         // console.log(`${days}::${hours}::${minutes}::${seconds}`);
+
+//         timerContainer.innerHTML = `<div class="field">
+//         <span class="value" data-days>${days}</span>
+//         <span class="label">Days</span>
+//       </div>
+//       <div class="field">
+//         <span class="value" data-hours>${hours}</span>
+//         <span class="label">Hours</span>
+//       </div>
+//       <div class="field">
+//         <span class="value" data-minutes>${minutes}</span>
+//         <span class="label">Minutes</span>
+//       </div>
+//       <div class="field">
+//         <span class="value" data-seconds>${seconds}</span>
+//         <span class="label">Seconds</span>
+//       </div>`;
+
+//         chooseDate -= 1000;
+//         startBtn.setAttribute('disabled', true);
+//     };
 
 function pad(value) {
     return String(value).padStart(2, '0');
@@ -87,8 +138,4 @@ function convertMs(ms) {
   const seconds = pad(Math.floor((((ms % day) % hour) % minute) / second));
 
   return { days, hours, minutes, seconds };
-}
-
-console.log(convertMs(2000)); // {days: 0, hours: 0, minutes: 0, seconds: 2}
-console.log(convertMs(140000)); // {days: 0, hours: 0, minutes: 2, seconds: 20}
-console.log(convertMs(24140000)); // {days: 0, hours: 6 minutes: 42, seconds: 20}
+};
