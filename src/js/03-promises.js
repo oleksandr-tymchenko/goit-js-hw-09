@@ -20,6 +20,11 @@ function formElementValue(e) {
 
 function counterPromises(delay, step, amount) {
 
+  if (delay < 0 || step < 0 || amount <= 0) {
+    Notiflix.Notify.failure(`❌ Enter value > 0`);
+    form.reset();
+    return;
+  }
   for (let i = 1; i <= amount; i++){
     createPromise(i, delay)
     .then(({ position, delay }) => {
